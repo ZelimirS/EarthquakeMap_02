@@ -73,7 +73,7 @@ public class ZelimirsEarthquakeWorldMap extends PApplet {
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_gray.png"));
 				imgMarker.setProperties(mrk.getProperties());
 				// mrk = imgMarker;
-				 earthquakeMarkersImage.add(imgMarker);  // NullPointerException????????
+//				 earthquakeMarkersImage.add(imgMarker);  // NullPointerException????????
 			} else if (magnitude > 4.0 && magnitude <= 4.9) {
 				// ((SimplePointMarker) mrk).setRadius(8);
 				// mrk.setColor(color(255, 247, 0));
