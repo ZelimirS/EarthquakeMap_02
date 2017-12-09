@@ -28,7 +28,7 @@ public class ZelimirsEarthquakeWorldMap extends PApplet {
 	String rssQuakeUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.atom";
 	String rssQuakeUrlOffline = "data/data/2.5_week.atom";
 
-	List<ImageMarker> earthquakeMarkersImage;////////////////////////////////////////////////
+	List<ImageMarker> earthquakeMarkersImage = new ArrayList<>();;////////////////////////////////////////////////
 	List<Marker> earthquakeMarkers = new ArrayList<>();
 	ImageMarker imgMarker = null;
 
@@ -55,14 +55,6 @@ public class ZelimirsEarthquakeWorldMap extends PApplet {
 		earthquakeMarkers = MapUtils.createSimpleMarkers(earthquakeFeatures);
 		// //////////////////
 
-		// for (Marker mrk : earthquakeMarkers) {
-		// String loc = mrk.getLocation().toString();
-		// String mag = mrk.getStringProperty("magnitude");
-		// String tit = mrk.getStringProperty("title");
-		// System.out.println(loc + "----" + tit + "----" +
-		// mrk.getStringProperty("age"));
-		// }
-
 		for (Marker mrk : earthquakeMarkers) {
 			// mrk.setStrokeWeight(0);
 			float magnitude = (float) (mrk.getProperty("magnitude"));
@@ -72,42 +64,52 @@ public class ZelimirsEarthquakeWorldMap extends PApplet {
 				// mrk.setColor(color(40, 191, 255));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_gray.png"));
 				imgMarker.setProperties(mrk.getProperties());
-				// mrk = imgMarker;
-//				 earthquakeMarkersImage.add(imgMarker);  // NullPointerException????????
+				earthquakeMarkersImage.add(imgMarker);
 			} else if (magnitude > 4.0 && magnitude <= 4.9) {
 				// ((SimplePointMarker) mrk).setRadius(8);
 				// mrk.setColor(color(255, 247, 0));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_yellow.png"));
 				imgMarker.setProperties(mrk.getProperties());
-				// mrk = imgMarker;
-				// earthquakeMarkersImage.add(imgMarker);
+				 earthquakeMarkersImage.add(imgMarker);
 			} else if (magnitude > 4.9) {
 				// ((SimplePointMarker) mrk).setRadius(12);
 				// mrk.setColor(color(255, 0, 0));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_red.png"));
 				imgMarker.setProperties(mrk.getProperties());
-				// mrk = imgMarker;
-				// earthquakeMarkersImage.add(imgMarker);
+				 earthquakeMarkersImage.add(imgMarker);
 			}
 			map.addMarker(imgMarker);
 		}
 		for (Marker mk : earthquakeMarkers) {
 			System.out.println("### " + mk.getProperties());
 		}
+		System.out.println("W *** " + map.getWidth() + "   H *** " + map.getHeight());
 	}
 
 	public void draw() {
 		map.draw();
 		addLegend();
-		addText(earthquakeMarkers);
+		addText(earthquakeMarkersImage);
 
 	}
 
-	private void addText(List<Marker> mrk) {
+	private void addText(List<ImageMarker> mrk) {
 		for (Marker m : mrk) {
+			float mapX = ((AbstractMarker) m).getScreenPosition(map).x;
+			float mapY = ((AbstractMarker) m).getScreenPosition(map).y;
 			String strMag = m.getProperty("magnitude").toString();
-			fill(240);
-			text(strMag, ((SimplePointMarker) m).getScreenPosition(map).x, ((SimplePointMarker) m).getScreenPosition(map).y);
+			if(m.getStringProperty("age").equals("Past Hour") && map.isHit(mapX, mapY)){
+				if((mapY > 60 && mapY < map.getHeight()+50 - 10) && (mapX > 205 && mapX < map.getWidth()+200 - 10)){
+					fill(255,0,0);
+					ellipse(mapX+2.0f, mapY, 14, 14);
+				}
+			}
+			if(m.isInside(map, mouseX+11, mouseY+43) && map.isHit(mapX, mapY)){
+				if(mapX < map.getWidth()+200 - 20){
+					fill(90);
+					text(strMag, mapX, mapY);
+				}
+			}
 		}
 	}
 
