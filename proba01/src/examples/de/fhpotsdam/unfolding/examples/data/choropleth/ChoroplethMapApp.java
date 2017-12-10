@@ -1,4 +1,4 @@
-package de.fhpotsdam.unfolding.examples.data.choropleth;
+package examples.de.fhpotsdam.unfolding.examples.data.choropleth;
 
 import java.util.HashMap;
 import java.util.List;

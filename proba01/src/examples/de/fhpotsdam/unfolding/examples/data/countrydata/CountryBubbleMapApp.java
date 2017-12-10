@@ -1,4 +1,4 @@
-package de.fhpotsdam.unfolding.examples.data.countrydata;
+package examples.de.fhpotsdam.unfolding.examples.data.countrydata;
 
 import java.util.HashMap;
 import java.util.List;

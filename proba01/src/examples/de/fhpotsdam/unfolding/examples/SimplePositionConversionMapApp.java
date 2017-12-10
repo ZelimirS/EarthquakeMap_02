@@ -1,9 +1,9 @@
-package de.fhpotsdam.unfolding.examples;
+package examples.de.fhpotsdam.unfolding.examples;
 
 import processing.core.PApplet;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
-import de.fhpotsdam.unfolding.examples.marker.SimpleMarkerManagerApp;
+import examples.de.fhpotsdam.unfolding.examples.marker.SimpleMarkerManagerApp;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import de.fhpotsdam.unfolding.utils.ScreenPosition;

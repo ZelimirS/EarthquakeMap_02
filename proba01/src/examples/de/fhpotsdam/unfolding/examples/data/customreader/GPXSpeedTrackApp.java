@@ -1,4 +1,4 @@
-package de.fhpotsdam.unfolding.examples.data.customreader;
+package examples.de.fhpotsdam.unfolding.examples.data.customreader;
 
 import java.util.List;
 

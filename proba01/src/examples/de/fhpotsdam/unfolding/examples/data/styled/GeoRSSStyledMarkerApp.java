@@ -1,4 +1,4 @@
-package de.fhpotsdam.unfolding.examples.data.styled;
+package examples.de.fhpotsdam.unfolding.examples.data.styled;
 
 import java.util.List;
 

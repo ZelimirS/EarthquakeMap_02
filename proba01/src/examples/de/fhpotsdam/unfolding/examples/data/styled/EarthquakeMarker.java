@@ -1,4 +1,4 @@
-package de.fhpotsdam.unfolding.examples.data.styled;
+package examples.de.fhpotsdam.unfolding.examples.data.styled;
 
 import processing.core.PGraphics;
 import de.fhpotsdam.unfolding.geo.Location;
