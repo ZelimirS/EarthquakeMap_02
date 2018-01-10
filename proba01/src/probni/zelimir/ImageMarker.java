@@ -28,5 +28,21 @@ public class ImageMarker extends AbstractMarker {
 	protected boolean isInside(float checkX, float checkY, float x, float y) {
 		return checkX > x && checkX < img.width + x && checkY > y && checkY < img.height + y;
 	}
+	
+	public String getMagnitude(ImageMarker iMarker){
+		return iMarker.getStringProperty("magnitude");
+	}
+	
+	public String getName(ImageMarker iMarker){
+		return iMarker.getStringProperty("name");
+	}
+	
+	public String getDepth(ImageMarker iMarker){
+		return iMarker.getStringProperty("depth");
+	}
+	
+	public String getAge(ImageMarker iMarker){
+		return iMarker.getStringProperty("age");
+	}
 
 }

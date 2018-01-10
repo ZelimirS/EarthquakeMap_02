@@ -9,10 +9,12 @@ import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.marker.AbstractMarker;
+import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Microsoft;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import probni.zelimir.CityMarker;
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -32,6 +34,7 @@ public class ZelimirsEarthquakeCityMap extends PApplet {
 	List<ImageMarker> earthquakeMarkersImage = new ArrayList<>();////////////////////////////////////////////////
 	List<Marker> earthquakeMarkers = new ArrayList<>();
 	private List<Marker> cityMarkers = new ArrayList<>();
+	private List<Marker> countryMarkers = new ArrayList<>();
 	ImageMarker imgMarker = null;
 	private String cityFile = "data/ui/city-data.json";
 	private String countryFile = "data/ui/countries.geo.json";
@@ -40,10 +43,9 @@ public class ZelimirsEarthquakeCityMap extends PApplet {
 
 		List<Feature> earthquakeFeatures = ZelimirParser.loadFeaturesFromRSS(this, rssQuakeUrl);
 		List<Feature> cityFeatures = GeoJSONReader.loadData(this, cityFile);
+		List<Feature> countryFeatures = GeoJSONReader.loadData(this, countryFile);
 		// List<Feature> earthquakeFeatures =
 		// ZelimirParser.loadFeaturesFromRSS(this, rssQuakeUrlOffline);
-		// earthquakeMarkers = new
-		// ArrayList<>();/////////////////////////////////////////////////////////////////////
 
 		size(1200, 600, OPENGL);
 
@@ -56,43 +58,38 @@ public class ZelimirsEarthquakeCityMap extends PApplet {
 
 		earthquakeMarkers = MapUtils.createSimpleMarkers(earthquakeFeatures);
 		cityMarkers = MapUtils.createSimpleMarkers(cityFeatures);
+		countryMarkers = MapUtils.createSimpleMarkers(countryFeatures);
 		// //////////////////
+		
+		for(Marker m : cityMarkers){
+			CityMarker imgM = new CityMarker(m.getLocation(), loadImage("data/data/cityMarker.png"));
+			imgM.setProperties(m.getProperties());
+			map.addMarker(imgM);
+		}
 
 		for (Marker mrk : earthquakeMarkers) {
 			// mrk.setStrokeWeight(0);
 			float magnitude = (float) (mrk.getProperty("magnitude"));
 			String age = (String) mrk.getProperty("age");
 			if (magnitude <= 4.0) {
-				// ((SimplePointMarker) mrk).setRadius(6);
-				// mrk.setColor(color(40, 191, 255));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_gray.png"));
 				imgMarker.setProperties(mrk.getProperties());
 				earthquakeMarkersImage.add(imgMarker);
 			} else if (magnitude > 4.0 && magnitude <= 4.9) {
-				// ((SimplePointMarker) mrk).setRadius(8);
-				// mrk.setColor(color(255, 247, 0));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_yellow.png"));
 				imgMarker.setProperties(mrk.getProperties());
 				 earthquakeMarkersImage.add(imgMarker);
 			} else if (magnitude > 4.9) {
-				// ((SimplePointMarker) mrk).setRadius(12);
-				// mrk.setColor(color(255, 0, 0));
 				imgMarker = new ImageMarker(mrk.getLocation(), loadImage("data/ui/marker_red.png"));
 				imgMarker.setProperties(mrk.getProperties());
 				 earthquakeMarkersImage.add(imgMarker);
 			}
 			map.addMarker(imgMarker);
 		}
-		for(Marker m : cityMarkers){
-			 ((SimplePointMarker) m).setRadius(6);
-			 m.setColor(color(40, 191, 255));
-//			ImageMarker imgM = new ImageMarker(m.getLocation(), loadImage("data/ui/unfolding-mini-icon.png"));
-//			imgM.setProperties(m.getProperties());
-			if(m.getStringProperty("name").equals("Banja Luka")){
-				System.out.println("BL loc: " + m.getLocation().getLat() + "    " + m.getLocation().getLon());
-			}
-			map.addMarker(m);
-		}
+		
+		//*****************************************************************************************************************************
+		EarthquakeMarker eqm;
+		//*****************************************************************************************************************************
 		for (Marker mk : earthquakeMarkers) {
 			System.out.println("### " + mk.getProperties());
 		}
@@ -123,6 +120,28 @@ public class ZelimirsEarthquakeCityMap extends PApplet {
 				}
 			}
 		}
+	}
+	
+	private boolean isLand(Marker earthquakeMrk){
+		for(Marker mrk : countryMarkers){
+			return isInCountry(mrk, earthquakeMrk);
+		}
+		return false;
+	}
+	private boolean isInCountry(Marker countryM, Marker earthquakeM){
+		if(countryM.getClass() == MultiMarker.class){
+			for(Marker m : ((MultiMarker) countryM).getMarkers()){
+				if(((AbstractShapeMarker)m).isInsideByLocation(earthquakeM.getLocation())){
+					earthquakeM.setProperty("name", countryM.getProperty("name"));
+					return true;
+				}
+			}
+		}
+		else if(((AbstractShapeMarker)countryM).isInsideByLocation(earthquakeM.getLocation())){
+			earthquakeM.setProperty("name", countryM.getProperty("name"));
+			return true;
+		}
+		return false;
 	}
 
 	private void addLegend() {
